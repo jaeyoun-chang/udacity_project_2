@@ -27,10 +27,10 @@ def clean_data(df):
     categories.columns = category_colnames
     # convert category values to just numbers 0 or 1
     for column in categories:
-    # set each value to be the last character of the string
-    categories[column] = categories[column].apply(lambda x: x[-1:])
-    # convert column from string to numeric
-    categories[column] = categories[column].astype('int')
+        # set each value to be the last character of the string
+        categories[column] = categories[column].apply(lambda x: x[-1:])
+        # convert column from string to numeric
+        categories[column] = categories[column].astype('int')
     # drop the original categories column from `df`
     df = df.drop(['categories'], axis = 1)
     # concatenate the original dataframe with the new `categories` dataframe
