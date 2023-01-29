@@ -37,10 +37,12 @@ def clean_data(df):
     df = pd.concat([df, categories], axis = 1)
     # drop duplicates
     df.drop_duplicates(inplace = True)
+    
+    return df
 
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///InsertDatabaseName.db')
-    df.to_sql('InsertTableName', engine, index=False)
+    df.to_sql(database_filename, engine, index=False)
 
 def main():
     if len(sys.argv) == 4:
