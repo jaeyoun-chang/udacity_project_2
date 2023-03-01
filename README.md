@@ -45,8 +45,8 @@ The project is composed of the following main files:
     1) To run ETL pipeline that cleans data and stores in database  
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
     2) To run ML pipeline that trains classifier and saves  
-        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
-        **This can take more than 1 hour**
+        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`  
+        **(This can take more than 1 hour!)**
 
 * Go to `app` directory by `cd app` to run run.py by `python run.py`  
 
