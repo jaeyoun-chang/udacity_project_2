@@ -2,14 +2,37 @@ import json
 import plotly
 import pandas as pd
 
+import nltk
+nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+import joblib
+# from sklearn.externals import joblib
 from sqlalchemy import create_engine
+from sklearn.base import BaseEstimator, TransformerMixin
+
+# import sys
+# import numpy as np
+# import pandas as pd
+# from sqlalchemy import create_engine
+# import nltk
+# nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
+# from nltk.tokenize import word_tokenize
+# from nltk.stem import WordNetLemmatizer
+# from nltk.corpus import stopwords
+# import string
+# from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+# from sklearn.model_selection import train_test_split, GridSearchCV
+# from sklearn.metrics import classification_report
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.pipeline import Pipeline, FeatureUnion
+# from sklearn.multioutput import MultiOutputClassifier
+# from sklearn.base import BaseEstimator, TransformerMixin
+# import pickle
 
 
 app = Flask(__name__)
@@ -30,13 +53,34 @@ def tokenize(text):
 
     return clean_tokens
 
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    '''
+    Class of extracting the starting verb of a sentence,
+    to create a new feature to be added in modelling
+    '''
+
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(tokenize(sentence))
+            first_word, first_tag = pos_tags[0]
+            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
+                return True
+        return False
+
+    def fit(self, x, y=None):
+        return self
+
+    def transform(self, X):
+        X_tagged = pd.Series(X).apply(self.starting_verb)
+        return pd.DataFrame(X_tagged)
+
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterResponse.db', engine)
 
 # load model
 model = joblib.load("../models/classifier.pkl")
-
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
