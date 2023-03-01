@@ -1,7 +1,5 @@
 # import libraries
-
 import sys
-import re
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
@@ -12,7 +10,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import string
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -34,9 +32,8 @@ def load_data(database_filepath):
     df.related = df.related.replace(2, 0)
     X = df.message.values
     Y = df.iloc[:, 4:].values
-    target_name = df.columns[4:]
-    
-    return X, Y, target_name
+    category_names = df.columns[4:]    
+    return X, Y, category_names
 
 def tokenize(text):
     '''
@@ -61,8 +58,7 @@ def tokenize(text):
         if tok not in stop_words:       
             # lemmatize, normalize case, and remove leading/trailing white space
             clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-            clean_tokens.append(clean_tok)
-    
+            clean_tokens.append(clean_tok)    
     return clean_tokens
 
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
@@ -90,8 +86,8 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
 
 def build_model():
     '''
-    Function to build a ML pipeline with feature union.returns a ML Pipeline that process text messages
-    according to NLP best-practice and apply a classifier.
+    Function to build ML pipeline with feature union and
+    return Gird_Search_CV with the best parameters
     '''
     pipeline = Pipeline([
     ('features', FeatureUnion(
@@ -108,14 +104,69 @@ def build_model():
         n_jobs = -1
         )))
     ])
-
+    pipeline.fit(X_train, Y_train)
+    # Hyper-parameters of grid_search
+    parameters = {
+    'clf__estimator__n_estimators': [100, 300, 500],
+    'clf__estimator__min_samples_split': [2, 6, 10, 14, 18],
+    }
+    # Create a grid search object using the pipeline and parameters
+    model = GridSearchCV(pipeline, parameters, cv = 3, verbose = 3)  
+    return model
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    '''
+    Function to report the f1 score, precision, recall and accuracy
+    for each output category of the dataset by iterating through the columns
+    and calling sklearn's `classification_report`
+    
+    - model: ML model
+    - X_test: test samples of input
+    - Y_test: test samples of output labels
+    category_names: label names of multi-output
+    '''
+    
+    Y_pred = model.predict(X_test)
+    list_precision, list_recall, list_f1 = [], [], []
+
+    # Iterate 36 target columns and generate a classification report for each
+    for i, col in enumerate(category_names):
+        
+        rslt = classification_report(Y_test[:, i], Y_pred[:, i])
+        
+        # weighted avg scores are in the 2nd last line: 
+        score_line = rslt.split('\n')[-2]
+        score_line_split = score_line.split()
+        
+        # scores are in the 2nd to 4th places of splitted texts of score_line
+        precision_score = float (score_line_split[2])
+        list_precision.append(precision_score)
+        
+        recall_score = float (score_line_split[3])
+        list_recall.append(recall_score)
+        
+        f1_score = float (score_line_split[4])
+        list_f1.append(f1_score)
+        
+        print(f'{i} Target column {col}:')
+        print(rslt)
+        print()
+        
+    print ('mean of weighted avg precision: {:.2f}'.format(sum(list_precision)/len(list_precision)))
+    print ('mean of weighted avg recall: {:.2f}'.format(sum(list_recall)/len(list_recall)))
+    print ('mean of weighted avg f1: {:.2f}'.format(sum(list_f1)/len(list_f1)))
+    # accuracy is the same as weighted ave recall
+    print ('mean of accuracy: {:.2f}'.format(sum(list_recall)/len(list_recall)))
 
 
 def save_model(model, model_filepath):
-    pass
+    '''
+    Function to save trained model as Pickle file
+    - model: ML model
+    - model_filepath: str, the file path of Pickle file
+    '''
+    with open(model_filepath, 'wb') as file:
+        pickle.dump(model, file)
 
 
 def main():
