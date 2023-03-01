@@ -24,7 +24,7 @@ def load_data(database_filepath):
     - database_filepath: str, the file path of SQLite database
     '''
 
-    engine = create_engine('sqlite:///DisasterResponse.db')
+    engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table(database_filepath, engine)
     # replace the value 2 of columns related to 0
     # as they are not disaster messages
@@ -158,13 +158,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print ('mean of accuracy: {:.2f}'.format(sum(list_recall)/len(list_recall)))
 
 # def save_model(model, model_filepath):
-def save_model(model):
+def save_model(model, model_filepath):
     '''
     Function to save trained model as Pickle file
     - model: ML model
     - model_filepath: str, the file path of Pickle file
     '''
-    with open('./models/classifier.pkl', 'wb') as file:
+    with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
 def main():
