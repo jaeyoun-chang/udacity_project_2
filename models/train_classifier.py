@@ -32,33 +32,28 @@ def load_data(database_filepath):
     df.related = df.related.replace(2, 0)
     X = df.message.values
     Y = df.iloc[:, 4:].values
-    category_names = df.columns[4:]    
+    category_names = df.columns[4:]       
     return X, Y, category_names
 
 def tokenize(text):
     '''
     Function to tokenize function text data including lemmatizing, 
-    normalizing, filtering stop words, and removing white space
+    normalizing, and removing white space
     - text: str, text messages
-    '''
-    
-    # tokenize text
+    '''    
     tokens = word_tokenize(text)
     
     # initiate lemmatizer
     lemmatizer = WordNetLemmatizer()
-    
-    # add stop_words
-    stop_words = stopwords.words("english") + list(string.punctuation)
-    
+
     # iterate through each token
     clean_tokens = []
     for tok in tokens:
         
-        if tok not in stop_words:       
-            # lemmatize, normalize case, and remove leading/trailing white space
-            clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-            clean_tokens.append(clean_tok)    
+        # lemmatize, normalize case, and remove leading/trailing white space
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
     return clean_tokens
 
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
@@ -83,7 +78,7 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         X_tagged = pd.Series(X).apply(self.starting_verb)
         return pd.DataFrame(X_tagged)
 
-def build_model():
+def build_model(X_train, Y_train):
     '''
     Function to build ML pipeline with feature union and
     return Gird_Search_CV with the best parameters
@@ -171,11 +166,11 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y, category_names = load_data(database_filepath)        
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
-        model = build_model()
+        model = build_model(X_train, Y_train)
         
         print('Training model...')
         model.fit(X_train, Y_train)

@@ -14,41 +14,20 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
-# def tokenize(text):
-#     tokens = word_tokenize(text)
-#     lemmatizer = WordNetLemmatizer()
-
-#     clean_tokens = []
-#     for tok in tokens:
-#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-#         clean_tokens.append(clean_tok)
-
-#     return clean_tokens
-
 def tokenize(text):
     '''
     Function to tokenize function text data including lemmatizing, 
-    normalizing, filtering stop words, and removing white space
+    normalizing, and removing white space
     - text: str, text messages
-    '''
-    
-    # tokenize text
+    '''   
     tokens = word_tokenize(text)
-    
-    # initiate lemmatizer
     lemmatizer = WordNetLemmatizer()
-    
-    # add stop_words
-    stop_words = stopwords.words("english") + list(string.punctuation)
-    
-    # iterate through each token
+
     clean_tokens = []
     for tok in tokens:
-        
-        if tok not in stop_words:       
-            # lemmatize, normalize case, and remove leading/trailing white space
-            clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-            clean_tokens.append(clean_tok)    
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
     return clean_tokens
 
 # load data
