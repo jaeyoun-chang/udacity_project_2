@@ -4,7 +4,7 @@
 
 This repository is for the second project of the data scientist program of Udacity.
 
-The given dataset has pre-labelled tweet and messages of disaster situation.  
+The given dataset has pre-labelled messages of disaster situation.  
 And the project is to build a ML model that processes natural language texts  
 and allocates them into 36 categories.  
 
@@ -39,7 +39,7 @@ The project is composed of the following main files:
 
 ## Web App Activation
 
-* Run the following commands in the project's root directory to set up your database and model
+* Run the following commands in root directory to set up database and model
 
     - To run ETL pipeline that cleans data and stores in database  
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`

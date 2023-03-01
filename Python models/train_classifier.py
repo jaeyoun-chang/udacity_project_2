@@ -83,7 +83,6 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         X_tagged = pd.Series(X).apply(self.starting_verb)
         return pd.DataFrame(X_tagged)
 
-
 def build_model():
     '''
     Function to build ML pipeline with feature union and
@@ -158,16 +157,15 @@ def evaluate_model(model, X_test, Y_test, category_names):
     # accuracy is the same as weighted ave recall
     print ('mean of accuracy: {:.2f}'.format(sum(list_recall)/len(list_recall)))
 
-
-def save_model(model, model_filepath):
+# def save_model(model, model_filepath):
+def save_model(model):
     '''
     Function to save trained model as Pickle file
     - model: ML model
     - model_filepath: str, the file path of Pickle file
     '''
-    with open(model_filepath, 'wb') as file:
+    with open('./models/classifier.pkl', 'wb') as file:
         pickle.dump(model, file)
-
 
 def main():
     if len(sys.argv) == 3:
