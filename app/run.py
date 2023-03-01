@@ -15,26 +15,6 @@ import joblib
 from sqlalchemy import create_engine
 from sklearn.base import BaseEstimator, TransformerMixin
 
-# import sys
-# import numpy as np
-# import pandas as pd
-# from sqlalchemy import create_engine
-# import nltk
-# nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
-# from nltk.tokenize import word_tokenize
-# from nltk.stem import WordNetLemmatizer
-# from nltk.corpus import stopwords
-# import string
-# from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-# from sklearn.model_selection import train_test_split, GridSearchCV
-# from sklearn.metrics import classification_report
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.pipeline import Pipeline, FeatureUnion
-# from sklearn.multioutput import MultiOutputClassifier
-# from sklearn.base import BaseEstimator, TransformerMixin
-# import pickle
-
-
 app = Flask(__name__)
 
 def tokenize(text):
@@ -92,17 +72,21 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    category_names = df.iloc[:, 4:].columns
+    category_counts = (df.iloc[:, 4:] != 0).sum().values
+    category_percentage = category_counts / category_counts.sum()
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+
     graphs = [
+        # Graph on Genre
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x = genre_names,
+                    y = genre_counts
                 )
             ],
-
             'layout': {
                 'title': 'Distribution of Message Genres',
                 'yaxis': {
@@ -112,9 +96,45 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+
+        # Graph on Category - Pie
+        {
+            'data': [
+                Pie(
+                    labels=category_names,
+                    values=category_percentage
+                )
+            ],
+            'layout': {
+                'title': 'Percentage of Message Categories', 'height': 500
+                },
+                'textinfo': 'label + percent',
+                'textposition': 'outside',
+        },
+
+        # Graph on Category - Dist
+        {
+            'data': [
+                Bar(
+                    x = category_names,
+                    y = category_counts
+                )
+            ],
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': 'Count'
+                },
+                'xaxis': {
+                    'title': 'Messages Category',
+                    'tickangle' : 30
+                }
+            }
         }
+
     ]
-    
+        
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
