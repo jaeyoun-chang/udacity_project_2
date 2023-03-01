@@ -15,6 +15,7 @@ The project is composed of the following main files:
 * ETL pipeline to extract data from the given dataset and to save them as  
   a database after pre-processing:
   ETL Pipeline Preparation.ipynb  
+  process_data.py (script to run ipynb above)  
   messages.csv   
   categories.csv   
   DisasterResponse.db
