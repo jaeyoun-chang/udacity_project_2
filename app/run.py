@@ -1,5 +1,4 @@
 import json
-import plotly
 import pandas as pd
 
 import nltk
@@ -9,7 +8,9 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+import plotly
+from plotly.graph_objs import Bar, Pie
+
 import joblib
 # from sklearn.externals import joblib
 from sqlalchemy import create_engine
@@ -74,7 +75,7 @@ def index():
     
     category_names = df.iloc[:, 4:].columns
     category_counts = (df.iloc[:, 4:] != 0).sum().values
-    category_percentage = category_counts / category_counts.sum()
+    category_percent = category_counts / category_counts.sum()
     
     # create visuals
 
@@ -102,8 +103,8 @@ def index():
         {
             'data': [
                 Pie(
-                    labels=category_names,
-                    values=category_percentage
+                    labels = category_names,
+                    values = category_percent
                 )
             ],
             'layout': {
