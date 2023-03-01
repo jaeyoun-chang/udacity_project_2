@@ -29,7 +29,8 @@ The project is composed of the following main files:
 ## Installation
 
 * Clone this repository  
-  (Please be well noted that **classifier.pkl** is NOT included in this repository)
+  (Please be well noted that **classifier.pkl** is NOT included in this repository.
+  It will be created in 2) running ML pipeline of Web App Activation below)
 
 * Install modules including:  
   ML: Pandas, Sciki-Learn  
@@ -41,9 +42,9 @@ The project is composed of the following main files:
 
 * Run the following commands in root directory to set up database and model
 
-    - To run ETL pipeline that cleans data and stores in database  
+    1) To run ETL pipeline that cleans data and stores in database  
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
-    - To run ML pipeline that trains classifier and saves  
+    2) To run ML pipeline that trains classifier and saves  
         `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
 * Go to `app` directory: `cd app`
