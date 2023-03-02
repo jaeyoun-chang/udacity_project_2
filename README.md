@@ -2,7 +2,8 @@
 
 ## Project
 
-This repository is for the second project of the data scientist program of Udacity.
+This repository (https://github.com/jaeyoun-chang/udacity_project_2)  
+is for the second project of the data scientist program of Udacity.
 
 The given dataset has pre-labelled messages of disaster situation.  
 And the project is to build a ML model that processes natural language texts  

@@ -73,7 +73,7 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    category_names = df.iloc[:, 4:].columns
+    category_names = df.columns[4:]
     category_counts = (df.iloc[:, 4:] != 0).sum().values
     category_percent = category_counts / category_counts.sum()
     
@@ -91,10 +91,10 @@ def index():
             'layout': {
                 'title': 'Distribution of Message Genres',
                 'yaxis': {
-                    'title': "Count"
+                    'title': 'Count'
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': 'Genre'
                 }
             }
         },
@@ -114,27 +114,27 @@ def index():
                 'textposition': 'outside',
         },
 
-        # Graph on Category - Dist
-        {
-            'data': [
-                Bar(
-                    x = category_names,
-                    y = category_counts
-                )
-            ],
-            'layout': {
-                'title': 'Distribution of Message Categories',
-                'yaxis': {
-                    'title': 'Count'
-                },
-                'xaxis': {
-                    'title': 'Messages Category',
-                    'tickangle' : 30
-                }
-            }
-        }
+        # # Graph on Category - Dist
+        # {
+        #     'data': [
+        #         Bar(
+        #             x = category_names,
+        #             y = category_counts
+        #         )
+        #     ],
+        #     'layout': {
+        #         'title': 'Distribution of Message Categories',
+        #         'yaxis': {
+        #             'title': 'Count'
+        #         },
+        #         'xaxis': {
+        #             'title': 'Messages Category',
+        #             'tickangle' : 30
+        #         }
+        #     }
+        # }
 
-    ]
+        ]
         
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
